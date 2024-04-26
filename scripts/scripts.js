@@ -1,9 +1,11 @@
 let movies; 
+const key = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMzQzZTA3M2U1YjJmM2U2NjY5MTI1NTFmMzNlNmMyYyIsInN1YiI6IjYyMGYyODhiN2FkMDhjMDA0MmQxOTRmNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LIiJh8XPwHNzf5VXEuK_5cA0jmSBIPYC_WPzVyaeJ_U'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMzQzZTA3M2U1YjJmM2U2NjY5MTI1NTFmMzNlNmMyYyIsInN1YiI6IjYyMGYyODhiN2FkMDhjMDA0MmQxOTRmNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LIiJh8XPwHNzf5VXEuK_5cA0jmSBIPYC_WPzVyaeJ_U"
+console.log('key: ', key)
 const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMzQzZTA3M2U1YjJmM2U2NjY5MTI1NTFmMzNlNmMyYyIsInN1YiI6IjYyMGYyODhiN2FkMDhjMDA0MmQxOTRmNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LIiJh8XPwHNzf5VXEuK_5cA0jmSBIPYC_WPzVyaeJ_U'
+    Authorization: `Bearer ${key}`
   }
 };
 

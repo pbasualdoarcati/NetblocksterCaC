@@ -38,19 +38,7 @@ const validateLoginForm = () => {
     document.getElementById("addMovieForm").reset();
   };
   
-  const populateSelectOptions = async () => {
-    const ratingSelect = document.getElementById("movieRating");
-    ratings.forEach(rating => {
-      const option = document.createElement("option");
-      option.value = rating.certification;
-      option.textContent = rating.certification;
-      ratingSelect.appendChild(option);
-    });
-  
-    const categorySelect = document.getElementById("movieCategory");
 
-  };
-  
   const addLoginEventListeners = () => {
     document.getElementById("username").addEventListener("input", validateLoginForm);
     document.getElementById("password").addEventListener("input", validateLoginForm);
@@ -79,7 +67,7 @@ const validateLoginForm = () => {
     }
     if (document.getElementById("addMovieForm")) {
       addMovieFormEventListeners();
-      populateSelectOptions();
+
     }
     
     const movies = await fetchMovies();
@@ -275,31 +263,21 @@ const displayRating = (rating)=>{
     .then(response => response.json())
     .then(response => {
       movies = response;
-      console.log('response: ', response)
       displayTopMoviesDesktop();
       displayCarousel();
       displayMoreMovies();
     })
-    .catch(err => console.error(err));
+
   
   fetch('https://api.themoviedb.org/3/genre/movie/list?language=en', options)
   .then(response => response.json())
   .then(response => {
       categories = response.genres;
-      console.log("categorie: ", response.genres)
       displayCategories(categories)
       displayRating(rating)
     })
   .catch(err => console.error(err));
-
-
-  categories.forEach(category => {
-    const option = document.createElement("option");
-    option.value = category.id;
-    option.textContent = category.name;
-    categorySelect.appendChild(option);
-  });
-    
+   
   const checkInputLength = () => {
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");

@@ -1,87 +1,97 @@
 :root {
-    --primary-color: #831010; 
-    --secondary-color: #fff; 
-    --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --navbar-color: #db0000
+  --primary-color: #831010; 
+  --secondary-color: #fff; 
+  --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --navbar-color: #db0000;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+h1 {
+  font-size: var(--h1-font-size);
+}
+
+.topMobile{
+  display: none;
+}
+
+.navbar {
+  background-color: var(--navbar-color);
+  color: #000;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+}
+
+.navbar-nav .nav-link {
+  color: var(--secondary-color);
+}
+
+.card {
+  background-color: #222;
+  color: var(--secondary-color);
+}
+
+.card-title {
+  color: var(--secondary-color);
+  text-align: center;
+}
+
+.movie-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.movie-card .card-title {
+  position: absolute;
+  top: 50%; 
+  left: 0;
+  right: 0;
+  transform: translateY(-50%); 
+  background-color: rgba(0, 0, 0, 0.7); 
+  padding: 10px;
+  margin: 0;
+  color: white; 
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out; 
+}
+
+.movie-card:hover .card-title {
+  visibility: visible;
+  opacity: 1; 
+}
+
+.movie-card:hover .card-img-top {
+  filter: blur(5px);
+}
+
+@media (max-width: 767px) {
+  .movie-card:focus .card-title {
+    visibility: visible;
   }
-  
-  body {
-    font-family: var(--font-family);
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-  }
-    
-  h1 {
-    font-size: var(--h1-font-size);
-  }
-  .topMobile{
+  .topDesktop{
     display: none;
   }
+  .topMobile{
+    display: block;
+  }
+}
 
-  .navbar {
-    background-color: var(--navbar-colo);
-    color: #000
-  }
-  
-  .navbar-brand {
-    font-size: 1.5rem;
-    color: var(--secondary-color);
-  }
-  
-  .navbar-nav .nav-link {
-    color: var(--secondary-color);
-  }
+/* Añadir estilo para la imagen y el contenedor flexible */
+.card-img-left {
+  max-width: 200px;
+  object-fit: cover;
+}
 
-  .card {
-    background-color: #222;
-    color: var(--secondary-color);
+@media (max-width: 767px) {
+  .card-img-left {
+    max-width: 100%;
   }
-  
-  .card-title {
-    color: var(--secondary-color);
-    text-align: center;
-  }
-  
-  .movie-card {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .movie-card .card-title {
-    position: absolute;
-    top: 50%; 
-    left: 0;
-    right: 0;
-    transform: translateY(-50%); 
-    background-color: rgba(0, 0, 0, 0.7); 
-    padding: 10px;
-    margin: 0;
-    color: white; 
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out; 
-  }
-  
-  .movie-card:hover .card-title {
-    visibility: visible;
-    opacity: 1; 
-  }
-  
-  .movie-card:hover .card-img-top {
-    filter: blur(5px);
-  }
-  
-  @media (max-width: 767px) {
-    .movie-card:focus .card-title {
-      visibility: visible;
-    }
-    .topDesktop{
-        display: none;
-    }
-    .topMobile{
-        display: block;
-    }
-  }
-  
-
-  
+}

@@ -129,10 +129,8 @@ const addMovieToList = (movies) => {
     document.getElementById("editMovieModal"),
     {}
   );
-  
+
   const editMovieForm = document.getElementById("editMovieForm");
-
-
 
   const moviesList = document.getElementById("moviesList");
 
@@ -141,19 +139,19 @@ const addMovieToList = (movies) => {
     return;
   }
 
-  editMovieForm.addEventListener('submit', async (event) => {
+  editMovieForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    // currentEditIndex = i
-    let editMovieName = document.getElementById('editMovieName').value;
-    let editMovieDescription =  document.getElementById('editMovieYear').value;
-    let editMovieYear = document.getElementById('editMovieDescription').value
-    
+    console.log("currentEditIndex > ", currentEditIndex);
+    let editMovieName = document.getElementById("editMovieName").value;
+    let editMovieDescription = document.getElementById("editMovieYear").value;
+    let editMovieYear = document.getElementById("editMovieDescription").value;
+
     let editedMovie = {
-        // "idPelicula":
-        "titulo": editMovieName,
-        "synopsis": editMovieDescription,
-        "duracion": editMovieYear
-    }
+      "idPelicula": currentEditIndex,
+      "titulo": editMovieName,
+      "synapsis": editMovieDescription,
+      "duracion": editMovieYear,
+    };
 
     const url = "http://localhost:8080/peliscacbackend/peliculas";
     const response = await fetch(url, {
@@ -171,15 +169,12 @@ const addMovieToList = (movies) => {
         window.location.reload();
       })
       .catch((err) => console.log("error: ", err));
-  
+
     if (!response.ok) {
       alert("Hubo un error al editar la pelicula.");
       throw new Error("Error editando la pelicula: " + response.statusText);
     }
-
-//   post!!!!!!
   });
-  
 
   for (let i = 0; i < 20; i++) {
     const movie = movies[i];
@@ -187,8 +182,6 @@ const addMovieToList = (movies) => {
       console.error("Invalid movie data:", movie);
       continue;
     }
-
-   
 
     const col = document.createElement("div");
     col.classList.add("col-md-4", "mb-4");
@@ -229,9 +222,10 @@ const addMovieToList = (movies) => {
     btnEditar.classList.add("btn", "btn-primary");
     btnEditar.textContent = "Editar";
     btnEditar.onclick = () => {
-      document.getElementById("editMovieName").value = movie.titulo;
-      document.getElementById("editMovieYear").value = movie.duracion;      
-      document.getElementById("editMovieDescription").value = movie.synopsis;
+        document.getElementById("editMovieName").value = movie.titulo;
+        document.getElementById("editMovieYear").value = movie.duracion;
+        document.getElementById("editMovieDescription").value = movie.synopsis;
+        currentEditIndex = movie.idPelicula;
 
       editMovieModal.show();
     };

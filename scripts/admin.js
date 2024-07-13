@@ -87,38 +87,53 @@ const handleAddMovieFormSubmit = async (event) => {
     .catch((err) => console.log("error: ", err));
 
   if (!response.ok) {
-    alert("Hubo un error al agregar la película.");
+    alert("Hubo un error al agregar la pelicula.");
     throw new Error("Error adding movie: " + response.statusText);
   }
 };
-const deleteMovie = async (id) => {
+
+const deleteMovie = (id) => {
   const url = "http://localhost:8080/peliscacbackend/peliculas";
+  const payload = { idPelicula: id };
+
   const options = {
-    method: "Delete",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ idPelicula: id }),
+    body: JSON.stringify(payload),
   };
 
   fetch(url, options)
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        return response.text().then((text) => {
+          throw new Error(text || "Network response was not ok");
+        });
       }
-      return response.json();
+      return response.text();
     })
-    .then((data) => {
-      console.log("Pelicula eliminada:", data);
-      // Actualizar la lista de películas en la interfaz de usuario
+    .then((rawResponse) => {
+      alert("Se ha eliminado la pelicula");
+      console.log("Pelicula eliminada:", rawResponse);
     })
     .catch((error) => {
-      console.error("Error al eliminar la película:", error);
+      console.error("Error al eliminar la pelicula:", error);
+      throw new Error("Error al eliminar la pelicula:" + response.statusText);
     });
 };
 
 // Function to add movie to the list in the DOM
 const addMovieToList = (movies) => {
+  const editMovieModal = new bootstrap.Modal(
+    document.getElementById("editMovieModal"),
+    {}
+  );
+  
+  const editMovieForm = document.getElementById("editMovieForm");
+
+
+
   const moviesList = document.getElementById("moviesList");
 
   if (!moviesList) {
@@ -126,83 +141,111 @@ const addMovieToList = (movies) => {
     return;
   }
 
-  for (let i = 0; i < 4; i++) {
+  editMovieForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    // currentEditIndex = i
+    let editMovieName = document.getElementById('editMovieName').value;
+    let editMovieDescription =  document.getElementById('editMovieYear').value;
+    let editMovieYear = document.getElementById('editMovieDescription').value
+    
+    let editedMovie = {
+        // "idPelicula":
+        "titulo": editMovieName,
+        "synopsis": editMovieDescription,
+        "duracion": editMovieYear
+    }
+
+    const url = "http://localhost:8080/peliscacbackend/peliculas";
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editedMovie),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("paso: ", data);
+        alert("Se ha editado la pelicula");
+        editMovieModal.hide();
+        window.location.reload();
+      })
+      .catch((err) => console.log("error: ", err));
+  
+    if (!response.ok) {
+      alert("Hubo un error al editar la pelicula.");
+      throw new Error("Error editando la pelicula: " + response.statusText);
+    }
+
+//   post!!!!!!
+  });
+  
+
+  for (let i = 0; i < 20; i++) {
     const movie = movies[i];
     if (!movie || !movie.imagen) {
       console.error("Invalid movie data:", movie);
       continue;
     }
 
+   
+
     const col = document.createElement("div");
-    col.className = "col-md-3 mb-4";
+    col.classList.add("col-md-4", "mb-4");
+
     const card = document.createElement("div");
-    card.className = "card movie-card";
+    card.classList.add("card", "h-100");
+
     const img = document.createElement("img");
-    img.className = "card-img-top";
     img.src = movie.imagen;
     img.alt = movie.titulo;
-    const cardBody = document.createElement("div");
-    cardBody.className = "card-body";
-    const title = document.createElement("h5");
-    title.className = "card-title";
-    title.textContent = movie.titulo;
+    img.classList.add("card-img-top");
 
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "btn btn-danger mt-3";
-    deleteButton.textContent = "Eliminar";
-    deleteButton.onclick = () => {
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("card-body");
+    cardBody.classList.add("new-card-body", "d-flex", "flex-column");
+
+    const titulo = document.createElement("h5");
+    titulo.classList.add("card-title");
+    titulo.textContent = movie.titulo;
+
+    const duracion = document.createElement("p");
+    duracion.classList.add("card-text");
+    duracion.textContent = `Duración: ${movie.duracion}`;
+
+    const synopsis = document.createElement("p");
+    synopsis.classList.add("card-text");
+    synopsis.textContent = movie.synopsis;
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.classList.add("btn", "btn-danger", "mr-2");
+    btnEliminar.textContent = "Eliminar";
+    btnEliminar.onclick = () => {
       moviesList.removeChild(col);
       deleteMovie(movie.idPelicula);
     };
-    cardBody.appendChild(deleteButton);
-    cardBody.appendChild(title);
+
+    const btnEditar = document.createElement("button");
+    btnEditar.classList.add("btn", "btn-primary");
+    btnEditar.textContent = "Editar";
+    btnEditar.onclick = () => {
+      document.getElementById("editMovieName").value = movie.titulo;
+      document.getElementById("editMovieYear").value = movie.duracion;      
+      document.getElementById("editMovieDescription").value = movie.synopsis;
+
+      editMovieModal.show();
+    };
+
+    cardBody.appendChild(titulo);
+    cardBody.appendChild(duracion);
+    cardBody.appendChild(synopsis);
+    cardBody.appendChild(btnEliminar);
+    cardBody.appendChild(btnEditar);
     card.appendChild(img);
     card.appendChild(cardBody);
     col.appendChild(card);
     moviesList.appendChild(col);
   }
-
-  //   const col = document.createElement("div");
-  //   col.className = "col-md-3 mb-4";
-
-  //   const card = document.createElement("div");
-  //   card.className = "card movie-card";
-
-  //   const img = document.createElement("img");
-  //   img.className = "card-img-top";
-  //   img.src = movies.imagen ?? "SIN IMAGEN"; // Assuming the file is already uploaded and you have the URL
-  //   img.alt = movies.titulo;
-
-  //   const cardBody = document.createElement("div");
-  //   cardBody.className = "card-body";
-
-  //   const title = document.createElement("h5");
-  //   title.className = "card-title";
-  //   title.textContent = movies.titulo;
-
-  //   const rating = document.createElement("p");
-  //   rating.className = "card-text";
-  //   rating.innerHTML = `<strong>Clasificación:</strong> 9`;
-
-  //   const category = document.createElement("p");
-  //   category.className = "card-text";
-  //   category.innerHTML = `<strong>Categoría:</strong> accion`;
-
-  //   const description = document.createElement("p");
-  //   description.className = "card-text";
-  //   description.textContent = movies.synopsis;
-
-  //   cardBody.appendChild(title);
-  //   cardBody.appendChild(year);
-  //   cardBody.appendChild(rating);
-  //   cardBody.appendChild(category);
-  //   cardBody.appendChild(description);
-  //   cardBody.appendChild(deleteButton);
-  //   card.appendChild(img);
-  //   card.appendChild(cardBody);
-  //   col.appendChild(card);
-
-  //   moviesList.appendChild(col);
 };
 
 // Function to fetch categories and ratings
@@ -211,7 +254,7 @@ const fetchCategoriesAndRatings = async () => {
     { id: 1, name: "Acción" },
     { id: 2, name: "Comedia" },
     { id: 3, name: "Drama" },
-    { id: 4, name: "Fantasía" },
+    { id: 4, name: "Fantasia" },
     { id: 5, name: "Terror" },
   ];
 
@@ -272,3 +315,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("NO MOVIE DATA");
   }
 });
+
+let currentEditIndex = null;

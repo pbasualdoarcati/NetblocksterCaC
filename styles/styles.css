@@ -95,3 +95,13 @@ h1 {
     max-width: 100%;
   }
 }
+
+.new-card-body {
+  display: flex;
+  flex-direction: column;
+}
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}

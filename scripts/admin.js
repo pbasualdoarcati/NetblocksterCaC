@@ -28,20 +28,21 @@ const toBase64 = (file) => {
   });
 };
 //fetch de peliculas
+let myMovies;
+
 const fetchMovies = async () => {
-    const url = "http://localhost:8080/peliscacbackend/peliculas"
+  const url = "http://localhost:8080/peliscacbackend/peliculas";
 
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-    });
-    const data = await response.json();
-    return data;
-
-  };
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    mode: "cors",
+  });
+  const data = await response.json();
+  return data;
+};
 
 // Function to handle form submission
 const handleAddMovieFormSubmit = async (event) => {
@@ -91,87 +92,117 @@ const handleAddMovieFormSubmit = async (event) => {
   }
 };
 const deleteMovie = async (id) => {
-    const url = `http://localhost:8080/peliscacbackend/peliculas/${id}`;
-  
-    try {
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Error deleting movie: " + response.statusText);
-      }
-  
-      const data = await response.json();
-      console.log("Pelicula eliminada:", data);
-      alert("Se ha eliminado la película");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Hubo un error al eliminar la película.");
-    }
+  const url = "http://localhost:8080/peliscacbackend/peliculas";
+  const options = {
+    method: "Delete",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idPelicula: id }),
   };
+
+  fetch(url, options)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Pelicula eliminada:", data);
+      // Actualizar la lista de películas en la interfaz de usuario
+    })
+    .catch((error) => {
+      console.error("Error al eliminar la película:", error);
+    });
+};
 
 // Function to add movie to the list in the DOM
-const addMovieToList = (movie) => {
+const addMovieToList = (movies) => {
   const moviesList = document.getElementById("moviesList");
 
-  const col = document.createElement("div");
-  col.className = "col-md-3 mb-4";
+  if (!moviesList) {
+    console.error("moviesContainer element not found");
+    return;
+  }
 
-  const card = document.createElement("div");
-  card.className = "card movie-card";
+  for (let i = 0; i < 4; i++) {
+    const movie = movies[i];
+    if (!movie || !movie.imagen) {
+      console.error("Invalid movie data:", movie);
+      continue;
+    }
 
-  const img = document.createElement("img");
-  img.className = "card-img-top";
-  img.src = movie.imagen; // Assuming the file is already uploaded and you have the URL
-  img.alt = movie.titulo;
+    const col = document.createElement("div");
+    col.className = "col-md-3 mb-4";
+    const card = document.createElement("div");
+    card.className = "card movie-card";
+    const img = document.createElement("img");
+    img.className = "card-img-top";
+    img.src = movie.imagen;
+    img.alt = movie.titulo;
+    const cardBody = document.createElement("div");
+    cardBody.className = "card-body";
+    const title = document.createElement("h5");
+    title.className = "card-title";
+    title.textContent = movie.titulo;
 
-  const cardBody = document.createElement("div");
-  cardBody.className = "card-body";
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "btn btn-danger mt-3";
+    deleteButton.textContent = "Eliminar";
+    deleteButton.onclick = () => {
+      moviesList.removeChild(col);
+      deleteMovie(movie.idPelicula);
+    };
+    cardBody.appendChild(deleteButton);
+    cardBody.appendChild(title);
+    card.appendChild(img);
+    card.appendChild(cardBody);
+    col.appendChild(card);
+    moviesList.appendChild(col);
+  }
 
-  const title = document.createElement("h5");
-  title.className = "card-title";
-  title.textContent = movie.titulo;
+  //   const col = document.createElement("div");
+  //   col.className = "col-md-3 mb-4";
 
-//   const year = document.createElement("p");
-//   year.className = "card-text";
-//   year.innerHTML = `<strong>Duracion:</strong> ${movie.duracion}`;
+  //   const card = document.createElement("div");
+  //   card.className = "card movie-card";
 
-  const rating = document.createElement("p");
-  rating.className = "card-text";
-  rating.innerHTML = `<strong>Clasificación:</strong> 9`;
+  //   const img = document.createElement("img");
+  //   img.className = "card-img-top";
+  //   img.src = movies.imagen ?? "SIN IMAGEN"; // Assuming the file is already uploaded and you have the URL
+  //   img.alt = movies.titulo;
 
-  const category = document.createElement("p");
-  category.className = "card-text";
-  category.innerHTML = `<strong>Categoría:</strong> accion`;
+  //   const cardBody = document.createElement("div");
+  //   cardBody.className = "card-body";
 
-  const description = document.createElement("p");
-  description.className = "card-text";
-  description.textContent = movie.synopsis;
+  //   const title = document.createElement("h5");
+  //   title.className = "card-title";
+  //   title.textContent = movies.titulo;
 
-  const deleteButton = document.createElement("button");
-  deleteButton.className = "btn btn-danger mt-3";
-  deleteButton.textContent = "Eliminar";
-  deleteButton.onclick = () => {
-    moviesList.removeChild(col);
-    deleteMovie(movie.idPelicula)
-  };
+  //   const rating = document.createElement("p");
+  //   rating.className = "card-text";
+  //   rating.innerHTML = `<strong>Clasificación:</strong> 9`;
 
-  cardBody.appendChild(title);
-//   cardBody.appendChild(year);
-  cardBody.appendChild(rating);
-  cardBody.appendChild(category);
-  cardBody.appendChild(description);
-  cardBody.appendChild(deleteButton);
-  card.appendChild(img);
-  card.appendChild(cardBody);
-  col.appendChild(card);
+  //   const category = document.createElement("p");
+  //   category.className = "card-text";
+  //   category.innerHTML = `<strong>Categoría:</strong> accion`;
 
-  moviesList.appendChild(col);
+  //   const description = document.createElement("p");
+  //   description.className = "card-text";
+  //   description.textContent = movies.synopsis;
+
+  //   cardBody.appendChild(title);
+  //   cardBody.appendChild(year);
+  //   cardBody.appendChild(rating);
+  //   cardBody.appendChild(category);
+  //   cardBody.appendChild(description);
+  //   cardBody.appendChild(deleteButton);
+  //   card.appendChild(img);
+  //   card.appendChild(cardBody);
+  //   col.appendChild(card);
+
+  //   moviesList.appendChild(col);
 };
 
 // Function to fetch categories and ratings
@@ -235,6 +266,9 @@ document.addEventListener("DOMContentLoaded", fetchCategoriesAndRatings);
 
 document.addEventListener("DOMContentLoaded", async () => {
   const movies = await fetchMovies();
-  console.log("MOVIES >> ", movies)
-  addMovieToList(movies);
+  if (movies) {
+    addMovieToList(movies);
+  } else {
+    console.log("NO MOVIE DATA");
+  }
 });
